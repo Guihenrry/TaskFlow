@@ -32,6 +32,10 @@ soares.douglas.oliveira@hotmail.com
 
 software TaskFlow é uma aplicação web projetada para a gestão eficiente de times e tarefas. Seu objetivo é oferecer uma plataforma intuitiva e eficaz para a atribuição e monitoramento de atividades dentro de equipes.
 
+## Video do funcionamento da aplicação
+
+https://www.loom.com/share/43a9ea6459c54e11b869cf4e0c9aec04?sid=3d9dda39-cbef-46e4-9414-c7a1f6ac0972
+
 ## Como utilizar
 
 Primeiro passo é clonar esse repositório
