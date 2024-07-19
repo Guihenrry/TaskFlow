@@ -3,14 +3,20 @@ import { useMutation } from '@tanstack/react-query'
 import api from '@/services/api'
 import queryClient from '@/services/queryClient'
 
-async function deleteSpace(id: number) {
-  const response = await api.delete(`/spaces/${id}`)
+type FormType = {
+  name: string
+  role: string
+  email: string
+}
+
+async function createMember(formData: FormType) {
+  const response = await api.post('/members', formData)
   return response.data
 }
 
-export function useDeleteSpaceMutation() {
+export default function useCreateMemberMutation() {
   return useMutation({
-    mutationFn: deleteSpace,
+    mutationFn: createMember,
     onSuccess: () => {
       queryClient.invalidateQueries()
     },

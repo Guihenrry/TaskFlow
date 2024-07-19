@@ -9,19 +9,19 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 
-type DeleteSpaceDialogProps = {
+type DeleteMemberDialogProps = {
   open: boolean
   isLoading: boolean
   onClose: () => void
   onSubmit: () => void
 }
 
-export function DeleteSpaceDialog({
+export function DeleteMemberDialog({
   open,
   isLoading,
   onClose,
   onSubmit,
-}: DeleteSpaceDialogProps) {
+}: DeleteMemberDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
       <AlertDialogContent>
@@ -29,7 +29,7 @@ export function DeleteSpaceDialog({
           <AlertDialogTitle>Você tem certeza absoluta?</AlertDialogTitle>
           <AlertDialogDescription>
             Essa ação não pode ser desfeita. Isso excluirá permanentemente seu
-            espaço.
+            membro.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

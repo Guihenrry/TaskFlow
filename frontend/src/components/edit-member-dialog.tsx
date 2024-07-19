@@ -11,42 +11,44 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import useCreateSpaceMutation from '@/queries/useCreateSpaceMutation'
 import api from '@/services/api'
 import toast from 'react-hot-toast'
 import queryClient from '@/services/queryClient'
 
 type Inputs = {
   name: string
-  capacity: string
+  email: string
+  role: string
 }
 
-type EditSpaceDialogProps = {
-  space: {
-    id: number
+type EditMemberDialogProps = {
+  member: {
+    id: string
     name: string
-    capacity: number
+    email: string
+    role: string
   }
   onClose: () => void
 }
 
-export function EditSpaceDialog({ space, onClose }: EditSpaceDialogProps) {
-  const open = !!space
-  const createSpaceMutation = useCreateSpaceMutation()
+export function EditMemberDialog({ member, onClose }: EditMemberDialogProps) {
+  const open = !!member
   const { register, handleSubmit } = useForm<Inputs>({
     defaultValues: {
-      name: space.name,
-      capacity: String(space.capacity),
+      name: member.name,
+      email: member.email,
+      role: member.role,
     },
   })
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      await api.put(`/spaces/${space.id}`, {
+      await api.put(`/members/${member.id}`, {
         name: data.name,
-        capacity: Number(data.capacity),
+        email: data.email,
+        role: data.role,
       })
-      toast.success('Espaço atualizado com sucesso')
+      toast.success('Membro atualizado com sucesso')
       queryClient.invalidateQueries()
       onClose()
     } catch (error) {
@@ -60,9 +62,9 @@ export function EditSpaceDialog({ space, onClose }: EditSpaceDialogProps) {
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>
-            <DialogTitle>Adicionar espaço</DialogTitle>
+            <DialogTitle>Editar membro</DialogTitle>
             <DialogDescription>
-              Adicione as informações do espaço aqui. Clique em salvar para
+              Adicione as informações do membro aqui. Clique em salvar para
               finalizar.
             </DialogDescription>
           </DialogHeader>
@@ -78,24 +80,29 @@ export function EditSpaceDialog({ space, onClose }: EditSpaceDialogProps) {
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="capacity" className="text-right">
-                Capacidade
+              <Label htmlFor="role" className="text-right">
+                Cargo
               </Label>
               <Input
-                {...register('capacity', { required: true })}
-                type="number"
-                id="capacity"
+                {...register('role', { required: true })}
+                id="role"
+                className="col-span-3"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="email" className="text-right">
+                Email
+              </Label>
+              <Input
+                {...register('email', { required: true })}
+                type="email"
+                id="email"
                 className="col-span-3"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button
-              type="submit"
-              disabled={createSpaceMutation.status === 'pending'}
-            >
-              Salvar
-            </Button>
+            <Button type="submit">Salvar</Button>
           </DialogFooter>
         </form>
       </DialogContent>

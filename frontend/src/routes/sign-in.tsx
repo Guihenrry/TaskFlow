@@ -19,8 +19,8 @@ import { Link } from 'react-router-dom'
 export function SignIn() {
   const { signIn } = useAuth()
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('admin@taskflow.com')
+  const [password, setPassword] = useState('12345678')
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -36,10 +36,10 @@ export function SignIn() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="h-screen flex p-4 flex-col items-center justify-center gap-8 bg-blue-400"
+      className="h-screen flex p-4 flex-col items-center justify-center gap-8 bg-gray-100"
     >
       <Link to="/">
-        <Logo className="w-48" />
+        <Logo className="w-48 text-blue-700" />
       </Link>
       <Card className="w-full max-w-sm">
         <CardHeader>

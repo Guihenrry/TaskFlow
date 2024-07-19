@@ -1,5 +1,7 @@
-import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm, SubmitHandler } from 'react-hook-form'
+import { z } from 'zod'
 
 import { useAuth } from '@/hooks/useAuth'
 import { Logo } from '@/components/logo'
@@ -16,19 +18,28 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Link } from 'react-router-dom'
 
+const FormSchema = z.object({
+  email: z.string().email({
+    message: 'Informe um endereço de e-mail válido.',
+  }),
+  password: z.string().min(6, {
+    message: 'A senha deve ter no mínimo 6 caracteres.',
+  }),
+})
+
 export function SignUp() {
   const { signUp } = useAuth()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  })
 
-  const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [password, setPassword] = useState('')
-
-  async function handleSubmit(event: React.FormEvent) {
-    event.preventDefault()
-
+  const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
     try {
-      await signUp({ email, password, name, phone })
+      await signUp({ email: data.email, password: data.password })
     } catch (error) {
       console.error(error)
       toast.error('Credenciais de login inválidas')
@@ -37,11 +48,11 @@ export function SignUp() {
 
   return (
     <form
-      onSubmit={handleSubmit}
-      className="h-screen flex flex-col p-4 items-center justify-center gap-8 bg-blue-400"
+      onSubmit={handleSubmit(onSubmit)}
+      className="h-screen flex flex-col p-4 items-center justify-center gap-8 bg-gray-100"
     >
       <Link to="/">
-        <Logo className="w-48" />
+        <Logo className="w-48 text-blue-700" />
       </Link>
       <Card className="w-full max-w-sm">
         <CardHeader>
@@ -52,49 +63,29 @@ export function SignUp() {
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="name">Nome</Label>
-            <Input
-              id="name"
-              type="name"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="phone">Telefone</Label>
-            <Input
-              id="phone"
-              type="phone"
-              required
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
               placeholder="m@example.com"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register('email')}
             />
+            {errors.email?.message && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Senha</Label>
-            <Input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <Input id="password" type="password" {...register('password')} />
+            {errors.password?.message && (
+              <p className="text-red-500 text-sm">{errors.password.message}</p>
+            )}
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Cadastra-se</Button>
+          <Button type="submit" className="w-full">
+            Cadastra-se
+          </Button>
         </CardFooter>
       </Card>
 

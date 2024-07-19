@@ -3,14 +3,13 @@ import { useMutation } from '@tanstack/react-query'
 import api from '@/services/api'
 import queryClient from '@/services/queryClient'
 
-async function createSpace(formData: FormData) {
-  const response = await api.post('/spaces', formData)
-  return response.data
+async function updateBoard(boardData) {
+  await api.put('/board', boardData)
 }
 
-export default function useCreateSpaceMutation() {
+export function useUpdateBoardMutation() {
   return useMutation({
-    mutationFn: createSpace,
+    mutationFn: updateBoard,
     onSuccess: () => {
       queryClient.invalidateQueries()
     },

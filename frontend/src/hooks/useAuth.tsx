@@ -1,7 +1,12 @@
-import { createContext, useContext, useEffect } from 'react'
+import { createContext, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from 'firebase/auth'
+
 import { useLocalStorage } from './useLocalStorage'
-import api from '../services/api'
+import { auth } from '../services/firebase'
 
 interface AuthProviderProps {
   children: React.ReactNode
@@ -15,8 +20,6 @@ interface SignInProps {
 interface SignUpProps {
   email: string
   password: string
-  phone: string
-  name: string
 }
 
 type User = {
@@ -39,34 +42,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useLocalStorage('user', null)
   const navigate = useNavigate()
 
-  const getUser = async (accessToken: string) => {
-    const response = await api.get('/user', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-    setUser(response.data)
-  }
-
   const signIn = async ({ email, password }: SignInProps) => {
-    const response = await api.post('/signin', {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
       email,
-      password,
-    })
-    setToken(response.data.session.access_token)
-    getUser(response.data.session.access_token)
+      password
+    )
+    const accessToken = await userCredential.user.getIdToken()
+    setToken(accessToken)
+    setUser(userCredential.user)
     navigate('/')
   }
 
-  const signUp = async ({ email, password, phone, name }: SignUpProps) => {
-    const response = await api.post('/signup', {
+  const signUp = async ({ email, password }: SignUpProps) => {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
       email,
-      password,
-      phone,
-      name,
-    })
-    setToken(response.data.session.access_token)
-    getUser(response.data.session.access_token)
+      password
+    )
+    const accessToken = await userCredential.user.getIdToken()
+    setToken(accessToken)
+    setUser(userCredential.user)
     navigate('/')
   }
 
@@ -76,21 +72,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     navigate('/sign-in')
   }
 
-  useEffect(() => {
-    if (token) {
-      api
-        .post('/auth/verify', null, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .catch((error) => {
-          console.error(error)
-          setToken(null)
-          setUser(null)
-        })
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (token) {
+  //     api
+  //       .post('/auth/verify', null, {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       })
+  //       .catch((error) => {
+  //         console.error(error)
+  //         setToken(null)
+  //         setUser(null)
+  //       })
+  //   }
+  // }, [])
 
   return (
     <AuthContext.Provider
