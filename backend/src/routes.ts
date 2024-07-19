@@ -5,6 +5,8 @@ import * as membersController from './controllers/members'
 
 const routes = express.Router()
 
+routes.get('/', (req, res) => res.json({ ok: true }))
+
 routes.get('/board', boardsController.get)
 routes.put('/board', boardsController.update)
 
